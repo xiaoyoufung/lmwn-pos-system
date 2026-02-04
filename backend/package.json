@@ -4,11 +4,19 @@
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "pg": "^8.18.0",
+    "pino": "^10.3.0",
     "prisma": "^7.3.0",
-    "save-dev": "^0.0.1-security"
+    "reflect-metadata": "^0.2.2",
+    "save-dev": "^0.0.1-security",
+    "tsyringe": "^4.10.0",
+    "typedi": "^0.10.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^25.2.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.21.0"
   }
 }
