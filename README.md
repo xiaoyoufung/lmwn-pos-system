@@ -8,6 +8,16 @@ npm install
 ```
 
 ## Technology
+Frontend
+- Vite + React.js + Tailwind.css
+
+Backend
+- TypeScript
+- Prisma - seeding initial database data
+- Express.js
+
+Devops
+- Docker
 
 ## Architecture 
 Clean Architecture and a Modular Monolith (with TypeScript)
@@ -17,7 +27,7 @@ reference. https://medium.com/@mwwtstq/building-a-scalable-express-api-using-cle
 ## Features Implemented
 
 ### Core (High Priority)
-- URS-02: Create new order by adding items and applying discounts (percentage or fixed amount)
+[ ] URS-02: Create new order by adding items and applying discounts (percentage or fixed amount)
 - URS-05: Receive validation errors when entering invalid data (negative prices, empty orders)
 - URS-03: See order totals calculated automatically (subtotal, discount, final total)
 - URS-01: View list of all orders with status and totals
