@@ -25,8 +25,6 @@ async function main() {
     },
   });
 
-  console.log('✅ Created restaurants');
-
   // Create Users for Restaurant 1
   const admin1 = await prisma.users.create({
     data: {
@@ -68,8 +66,6 @@ async function main() {
       role: 'CASHIER',
     },
   });
-
-  console.log('✅ Created users');
 
   // Create Items for Restaurant 1
   const items1 = await prisma.items.createMany({
@@ -195,8 +191,6 @@ async function main() {
     ],
   });
 
-  console.log('✅ Created menu items');
-
   // Create Tables for Restaurant 1
   const tables1 = await prisma.tables.createMany({
     data: [
@@ -274,8 +268,6 @@ async function main() {
     ],
   });
 
-  console.log('✅ Created tables');
-
   // Create Discounts for Restaurant 1
   const discount1 = await prisma.discounts.create({
     data: {
@@ -343,8 +335,6 @@ async function main() {
       isActive: true,
     },
   });
-
-  console.log('✅ Created discounts');
 
   console.log('');
   console.log('🎉 Database seeding completed successfully!');
