@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Restaurants {
+  restaurantId String  @id @default(uuid()) @map("restaurant_id") @db.Uuid
+  name         String  @db.VarChar
+  users        Users[]
+
+  @@map("restaurants")
+}
+
+model Users {
+  userId       String      @id @default(uuid()) @map("user_id") @db.Uuid
+  restaurantId String      @map("restaurant_id") @db.Uuid
+  restaurant   Restaurants @relation(fields: [restaurantId], references: [restaurantId])
+  name         String      @db.VarChar
+  role         String      @db.VarChar // CASHIER, MANAGER, or ADMIN
+
+  @@map("users")
+}
