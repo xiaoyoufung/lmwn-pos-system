@@ -4,6 +4,7 @@ import RootLayout from './pages/Root';
 import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import Reports from './pages/Reports';
+import OrderList from './features/orders/components/OrderList';
 
 
 function App() {
@@ -20,7 +21,13 @@ function App() {
         },
         {
           path: "/orders",
-          element: <Orders />
+          element: <OrderList />,
+          children: [
+            {
+              path: ":orderId",
+              element: <Orders />
+            }
+          ]
         },
         {
           path: "/reports",
