@@ -26,7 +26,7 @@ npm install
 
 - Provides ACID compliance, which is suitable for pos system that prioritizes financial data transactions like Orders + OrderItems + Payments that must be atomic
 
-- Relational database structure has Clear foreign key relationships, so it is more suitable, for example:
+- Relational database structure has Clear foreign key relationships, for example:
     - Orders have Items (1:N)
     - Orders have StatusHistory (1:N)
 
