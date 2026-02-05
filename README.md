@@ -153,7 +153,7 @@ docker-compose logs postgres
 ## User Requirements
 
 Full requirements available in machine readable format: [URS.csv](./docs/URS-Full.csv)
-
+<!-- 
 ## Features Implemented
 
 ### Core (High Priority)
@@ -180,7 +180,7 @@ Full requirements available in machine readable format: [URS.csv](./docs/URS-Ful
 
 ### Future Enhancements (Low Priority)
 - [ ] Status count dashboard (URS-11)
-
+ -->
 
 ---
 
