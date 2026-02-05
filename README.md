@@ -1,9 +1,9 @@
 # POS System - LINE MAN Wongnai
 
-**Author:** Xiaoyou Fung
-**Email:** xiaoyoufung@gmail.com
-**Date:** 5 February 2026  
-**Assignment:** Junior 2026 - Software Engineer (Node.js)
+**Author:** Xiaoyou Fung </br>
+**Email:** xiaoyoufung@gmail.com  </br>
+**Date:** 5 February 2026    </br>
+**Assignment:** Junior 2026 - Software Engineer (Node.js)  </br>
 
 ---
 
