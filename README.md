@@ -1,11 +1,38 @@
 # POS System - LINE MAN Wongnai
 
-##  Run project
+## Docker Setup
 
-1. install all dependencies
+### Prerequisites
+- Docker 20.10+
+- Docker Compose 2.0+
+
+### Quick Start
+
+1. **Clone and configure**
+```bash
+   git clone 
+   cd pos-system
+   cp .env.example .env
+   # Edit .env with your values
 ```
-npm install
+
+2. **Start services**
+```bash
+   docker-compose up -d
 ```
+
+3. **Initialize database**
+```bash
+   # Migrations will run automatically on startup
+   # Check logs to confirm
+   docker-compose logs backend | grep "Prisma"
+```
+
+4. **Access the application**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:3000
+   - API Health: http://localhost:3000/health
+   - Prisma Studio: `docker-compose exec backend npx prisma studio`
 
 ## Technology Choices
 ### Frontend
