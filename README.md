@@ -335,3 +335,27 @@ If this system were deployed in production, here's what I'd build next, in order
 - Read replicas for reporting queries
 - Redis caching for frequently accessed data
 - CDN for frontend assets
+
+---
+
+# API Quick Reference
+
+## Orders
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/orders` | POST | Create order |
+| `/api/orders` | GET | List orders |
+| `/api/orders/:id` | GET | Get order details |
+| `/api/orders/:id/status` | PATCH | Update status |
+
+<!-- ## Reports
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/reports/daily-sales?date=YYYY-MM-DD` | GET | Daily sales summary | -->
+
+## Status Values
+PENDING | CONFIRMED | PREPARING | READY | COMPLETED | CANCELLED
+
+## Discount Types
+- `percentage`: 0-100
+- `fixed`: amount in satang
