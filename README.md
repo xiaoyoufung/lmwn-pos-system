@@ -25,7 +25,7 @@ Devops
 - In the future, if we have a Billing module and need independent scaling to extract its service, the clean architecture can make the extraction easier
 
 ## ER Diagram
-![Alt text](docs/ER-Diagram.csv)
+![Alt text](docs/ER-Diagram.svg)
 
 
 ## User Requirements
