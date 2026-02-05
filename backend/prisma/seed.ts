@@ -612,26 +612,6 @@ async function main() {
     ],
   });
 
-  console.log('');
-  console.log('🎉 Database seeding completed successfully!');
-  console.log('');
-  console.log('Summary:');
-  console.log(`- Restaurants: 2`);
-  console.log(`- Users: 5`);
-  console.log(`- Menu Items: 18`);
-  console.log(`- Tables: 13`);
-  console.log(`- Discounts: 6`);
-  console.log(`- Orders: 3 (with 3 items and 2 discounts each)`);
-  console.log(`- Order Status History: 2 records`);
-  console.log('');
-  console.log('Restaurant IDs:');
-  console.log(`- The Golden Fork: ${restaurant1.restaurantId}`);
-  console.log(`- Sunset Bistro: ${restaurant2.restaurantId}`);
-  console.log('');
-  console.log('Order Details:');
-  console.log(`- Order 1: ${order1.orderId} (CONFIRMED) - Subtotal: $${(order1Subtotal/100).toFixed(2)}, Total: $${(order1Total/100).toFixed(2)}`);
-  console.log(`- Order 2: ${order2.orderId} (PAID) - Subtotal: $${(order2Subtotal/100).toFixed(2)}, Total: $${(order2Total/100).toFixed(2)}`);
-  console.log(`- Order 3: ${order3.orderId} (CREATED) - Subtotal: $${(order3Subtotal/100).toFixed(2)}, Total: $${(order3Total/100).toFixed(2)}`);
 }
 
 main()

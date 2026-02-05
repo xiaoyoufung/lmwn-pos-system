@@ -8,39 +8,106 @@
 ---
 
 
-## Docker Setup
+## Getting Started
 
 ### Prerequisites
-- Docker 20.10+
-- Docker Compose 2.0+
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- [Node.js 22+](https://nodejs.org/) (only for local development)
 
-### Quick Start
+### Quick Start with Docker
 
-1. **Clone and configure**
+1. **Clone and setup**
 ```bash
-   git clone 
+   git clone <your-repo-url>
    cd pos-system
    cp .env.example .env
-   # Edit .env with your values
 ```
 
-2. **Start services**
+2. **Start all services**
 ```bash
    docker-compose up -d
 ```
 
-3. **Initialize database**
+3. **Access the application**
+   -  Frontend: http://localhost:3000
+   -  Backend API: http://localhost:8003
+   -  Prisma Studio: `cd backend && npx prisma studio`
+
+### Stopping Services
 ```bash
-   # Migrations will run automatically on startup
-   # Check logs to confirm
-   docker-compose logs backend | grep "Prisma"
+docker-compose down       # Stop services
+docker-compose down -v    # Stop and remove data
 ```
 
-4. **Access the application**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:3000
-   - API Health: http://localhost:3000/health
-   - Prisma Studio: `docker-compose exec backend npx prisma studio`
+### Local Development Setup
+
+<details>
+<summary>Click to expand local development instructions</summary>
+
+**1. Start Database**
+```bash
+docker-compose up -d postgres
+```
+
+**2. Setup Backend**
+```bash
+cd backend
+npm install
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed  # Optional: seed test data
+npm run dev
+```
+
+**3. Setup Frontend**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+</details>
+
+### Environment Variables
+
+Key variables in `.env`:
+```env
+POSTGRES_PORT=5433        # Database port
+BACKEND_PORT=8003         # API port
+FRONTEND_PORT=3000        # Frontend port
+DATABASE_URL=postgresql://admin:Admin_123@localhost:5433/pos-system-db
+```
+
+### Useful Commands
+```bash
+# View logs
+docker-compose logs -f backend
+
+# Reset database
+cd backend && npx prisma migrate reset
+
+# Access database
+docker-compose exec postgres psql -U admin -d pos-system-db
+
+# Rebuild everything
+docker-compose up -d --build
+```
+
+### Troubleshooting
+
+**Port already in use?**
+```bash
+# Change port in .env file or kill the process
+lsof -i :5433
+```
+
+**Database connection failed?**
+```bash
+# Check if database is healthy
+docker-compose ps
+docker-compose logs postgres
+```
+
 
 ---
 
