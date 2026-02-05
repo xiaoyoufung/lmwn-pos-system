@@ -7,21 +7,6 @@
 
 ---
 
-## 📖 Table of Contents
-
-1. [Quick Start](#quick-start)
-2. [System Overview](#system-overview)
-3. [Technology Stack](#technology-stack)
-4. [Architecture & Design Decisions](#architecture--design-decisions)
-5. [Prioritization Strategy](#prioritization-strategy)
-6. [Database Schema](#database-schema)
-7. [API Documentation](#api-documentation)
-8. [Features Implemented](#features-implemented)
-9. [Testing](#testing)
-10. [Future Improvements](#future-improvements)
-11. [Troubleshooting](#troubleshooting)
-
----
 
 ## Docker Setup
 
