@@ -19,7 +19,7 @@ Devops
 - Docker
 
 ## Architecture: Clean Architecture and Modular Monolith
-### Why this choice?
+### Why I choose this approach?
 - It is suitable for a new team building a system from scratch using a Modular monolith. We can reduce operational complexity when compared to microservices.
 - As we're building a POS system, the system that has clearly bounded contexts like the order module, the billing module, and the reporting module, which can extend by themselves within the monolith
 - In the future, if we have a Billing module and need independent scaling to extract its service, the clean architecture can make the extraction easier
