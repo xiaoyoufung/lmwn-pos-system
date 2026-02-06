@@ -10,7 +10,7 @@ interface OrderCardProps {
 
 export default function OrderCard({ order }: OrderCardProps) {
   return (
-    <Link to={`/orders/${order.id}`}>
+    <Link to={`/orders/${order.orderId}`}>
       <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="flex-1">

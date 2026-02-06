@@ -26,7 +26,7 @@ export interface OrderStatusHistory {
 }
 
 export interface Order {
-  id: string
+  orderId: string
   restaurantId: string
   tableNumber: number
   subtotalAmount: number // satang

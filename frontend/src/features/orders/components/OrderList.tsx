@@ -27,7 +27,7 @@ export default function OrderList() {
         </Link>
       </div>
 
-      <OrderFilters selectedStatus={statusFilter} onStatusChange={setStatusFilter} />
+      {/* <OrderFilters selectedStatus={statusFilter} onStatusChange={setStatusFilter} /> */}
 
       {!orders || orders.length === 0 ? (
         <Card>
@@ -44,7 +44,7 @@ export default function OrderList() {
       ) : (
         <div className="grid gap-4">
           {orders.map((order) => (
-            <OrderCard key={order.id} order={order} />
+            <OrderCard key={order.orderId} order={order} />
           ))}
         </div>
       )}
