@@ -6,11 +6,11 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum OrderStatus {
@@ -40,22 +40,22 @@ enum OrderType {
 }
 
 model Restaurants {
-  restaurantId String   @id @default(uuid()) @map("restaurant_id") @db.Uuid
-  name         String   @db.VarChar
-  users        Users[]
-  items        Items[]
-  tables       Tables[]
-  discounts    Discounts[]
-  orders      Orders[]
+  id               String                 @id @default(uuid()) @map("restaurant_id") @db.Uuid
+  name             String                 @db.VarChar
+  users            Users[]
+  items            Items[]
+  tables           Tables[]
+  discounts        Discounts[]
+  orders           Orders[]
   dailyOrderCounters DailyOrderCounters[]
 
   @@map("restaurants")
 }
 
 model Users {
-  userId       String      @id @default(uuid()) @map("user_id") @db.Uuid
+  id           String      @id @default(uuid()) @map("user_id") @db.Uuid
   restaurantId String      @map("restaurant_id") @db.Uuid
-  restaurant   Restaurants @relation(fields: [restaurantId], references: [restaurantId])
+  restaurant   Restaurants @relation(fields: [restaurantId], references: [id])
   name         String      @db.VarChar
   role         UserRole    
 
@@ -63,112 +63,113 @@ model Users {
 }
 
 model Items {
-  itemId       String       @id @default(uuid()) @map("item_id") @db.Uuid
+  id           String       @id @default(uuid()) @map("item_id") @db.Uuid
   restaurantId String       @map("restaurant_id") @db.Uuid
-  restaurant   Restaurants  @relation(fields: [restaurantId], references: [restaurantId])
+  restaurant   Restaurants  @relation(fields: [restaurantId], references: [id])
   name         String       @db.VarChar
   priceMinor   Int          @map("price_minor") // price in string 100.45 => 10045
-  is_available Boolean     @default(true) @map("is_available")
+  is_available Boolean      @default(true) @map("is_available")
   orderItems   OrderItems[]
 
   @@map("items")
 }
 
 model Tables {
-  tableId      String      @id @default(uuid()) @map("table_id") @db.Uuid
+  id           String      @id @default(uuid()) @map("table_id") @db.Uuid
   restaurantId String      @map("restaurant_id") @db.Uuid
-  restaurant   Restaurants @relation(fields: [restaurantId], references: [restaurantId])
+  restaurant   Restaurants @relation(fields: [restaurantId], references: [id])
   tableName    String      @map("table_name") @db.VarChar
-  isActive    Boolean     @default(true) @map("is_active")
+  isActive     Boolean     @default(true) @map("is_active")
   orders       Orders[]
 
   @@map("tables")
 }
 
 model Discounts {
-  discountId     String         @id @default(uuid()) @map("discount_id") @db.Uuid
-  restaurantId   String         @map("restaurant_id") @db.Uuid
-  restaurant     Restaurants    @relation(fields: [restaurantId], references: [restaurantId])
-  name           String         @db.VarChar
-  type           DiscountType   
-  percentageValue Int?        @map("percentage_value")
-  fixedAmountMinor Int?       @map("fixed_amount_minor")    
-  expiredAt      DateTime?       @map("expired_at")
-  isActive       Boolean         @default(true) @map("is_active")
-  orderDiscounts OrderDiscounts[]
+  id               String           @id @default(uuid()) @map("discount_id") @db.Uuid
+  restaurantId     String           @map("restaurant_id") @db.Uuid
+  restaurant       Restaurants      @relation(fields: [restaurantId], references: [id])
+  name             String           @db.VarChar
+  type             DiscountType   
+  percentageValue  Int?             @map("percentage_value")
+  fixedAmountMinor Int?             @map("fixed_amount_minor")    
+  expiredAt        DateTime?        @map("expired_at")
+  isActive         Boolean          @default(true) @map("is_active")
+  orderDiscounts   OrderDiscounts[]
 
   @@map("discounts")
 }
 
 model Orders {
-  orderId           String              @id @default(uuid()) @map("order_id") @db.Uuid
-  displayId         Int                @map("display_id") // The Queue Number
-  orderNumber       String               @unique @map("order_number") @db.VarChar // The overall order number
-  restaurantId     String              @map("restaurant_id") @db.Uuid
-  restaurant       Restaurants        @relation(fields: [restaurantId], references: [restaurantId])
-  orderType        OrderType          @map("order_type") @default(DINE_IN)
-  tableId           String?              @map("table_id") @db.Uuid
-  table             Tables?              @relation(fields: [tableId], references: [tableId])
-  status            OrderStatus              @map("status") @default(CREATED)
-  subtotalMinor    Int                 @map("subtotal_minor")
-  discountTotalMinor Int                 @map("discount_total_minor")
-  totalMinor       Int                 @map("total_minor")
-  createdByUserId   String              @map("created_by") @db.Uuid
-  createdAt         DateTime            @default(now()) @map("created_at")
-  updatedAt         DateTime            @updatedAt @map("updated_at")
-  orderItems        OrderItems[]
-  orderDiscounts    OrderDiscounts[]
+  id                 String               @id @default(uuid()) @map("order_id") @db.Uuid
+  displayId          Int                  @map("display_id") // The Queue Number
+  orderNumber        String               @unique @map("order_number") @db.VarChar // The overall order number
+  restaurantId       String               @map("restaurant_id") @db.Uuid
+  restaurant         Restaurants          @relation(fields: [restaurantId], references: [id])
+  orderType          OrderType            @map("order_type") @default(DINE_IN)
+  tableId            String?              @map("table_id") @db.Uuid
+  table              Tables?              @relation(fields: [tableId], references: [id])
+  status             OrderStatus          @map("status") @default(CREATED)
+  subtotalMinor      Int                  @map("subtotal_minor")
+  discountTotalMinor Int                  @map("discount_total_minor")
+  totalMinor         Int                  @map("total_minor")
+  createdByUserId    String               @map("created_by") @db.Uuid
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  orderItems         OrderItems[]
+  orderDiscounts     OrderDiscounts[]
   orderStatusHistory OrderStatusHistory[]
 
   @@map("orders")
 }
 
 model OrderItems {
-  orderItemId String @id @default(uuid()) @map("order_item_id") @db.Uuid
-  orderId     String @map("order_id") @db.Uuid
-  order       Orders @relation(fields: [orderId], references: [orderId])
-  itemId      String @map("item_id") @db.Uuid
-  item        Items  @relation(fields: [itemId], references: [itemId])
-  itemNameSnapshot String @map("item_name_snapshot") @db.VarChar
+  id                     String @id @default(uuid()) @map("order_item_id") @db.Uuid
+  orderId                String @map("order_id") @db.Uuid
+  order                  Orders @relation(fields: [orderId], references: [id])
+  itemId                 String @map("item_id") @db.Uuid
+  item                   Items  @relation(fields: [itemId], references: [id])
+  itemNameSnapshot       String @map("item_name_snapshot") @db.VarChar
   unitPriceMinorSnapshot Int    @map("unit_price_minor_snapshot")
-  quantity    Int
-  lineSubtotalMinor Int    @map("line_subtotal_minor")
-  lineDiscountMinor Int    @map("line_discount_minor")
-  lineTotalMinor Int    @map("line_total_minor")
+  quantity               Int
+  lineSubtotalMinor      Int    @map("line_subtotal_minor")
+  lineDiscountMinor      Int    @map("line_discount_minor")
+  lineTotalMinor         Int    @map("line_total_minor")
 
   @@map("order_items")
 }
 
 model OrderDiscounts {
-  orderDiscountId String    @id @default(uuid()) @map("order_discount_id") @db.Uuid
-  orderId         String    @map("order_id") @db.Uuid
-  order           Orders    @relation(fields: [orderId], references: [orderId])
-  discountId      String    @map("discount_id") @db.Uuid
-  discount        Discounts @relation(fields: [discountId], references: [discountId])
-  type           DiscountType
-  percentageValue Int?      @map("percentage_value")
-  fixedAmountMinor Int?     @map("fixed_amount_minor")
-  appliedAmountMinor Int       @map("applied_amount_minor")
-  createdAt      DateTime  @default(now()) @map("created_at")
+  id                 String       @id @default(uuid()) @map("order_discount_id") @db.Uuid
+  orderId            String       @map("order_id") @db.Uuid
+  order              Orders       @relation(fields: [orderId], references: [id])
+  discountId         String       @map("discount_id") @db.Uuid
+  discount           Discounts    @relation(fields: [discountId], references: [id])
+  type               DiscountType
+  percentageValue    Int?         @map("percentage_value")
+  fixedAmountMinor   Int?         @map("fixed_amount_minor")
+  appliedAmountMinor Int          @map("applied_amount_minor")
+  createdAt          DateTime     @default(now()) @map("created_at")
+  
   @@map("order_discounts")
 }
 
 model OrderStatusHistory {
-  id String   @id @default(uuid()) @map("id") @db.Uuid
-  orderId   String   @map("order_id") @db.Uuid
-  order     Orders   @relation(fields: [orderId], references: [orderId])
-  fromStatus OrderStatus?   @map("from_status") 
-  toStatus OrderStatus   @map("to_status") 
-  changedByUserId String @map("changed_by") @db.Uuid
-  changedAt DateTime @map("changed_at")
-  notes     String?  @db.Text
+  id              String       @id @default(uuid()) @db.Uuid
+  orderId         String       @map("order_id") @db.Uuid
+  order           Orders       @relation(fields: [orderId], references: [id])
+  fromStatus      OrderStatus? @map("from_status") 
+  toStatus        OrderStatus  @map("to_status") 
+  changedByUserId String       @map("changed_by") @db.Uuid
+  changedAt       DateTime     @map("changed_at")
+  notes           String?      @db.Text
   
   @@map("order_status_history")
 }
 
 model DailyOrderCounters {
   restaurantId String      @map("restaurant_id") @db.Uuid
-  restaurant   Restaurants @relation(fields: [restaurantId], references: [restaurantId])
+  restaurant   Restaurants @relation(fields: [restaurantId], references: [id])
   dateKey      DateTime    @default(now()) @map("date_key") @db.Date
   lastVal      Int         @default(0) @map("last_val")
 
