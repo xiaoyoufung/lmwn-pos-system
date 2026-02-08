@@ -6,8 +6,10 @@ export enum OrderType {
   DELIVERY = 'DELIVERY'
 }
 
+const validOrderTypes = new Set(Object.values(OrderType));
+
 export const isValidOrderType = (orderType: string): orderType is OrderType => {
-  return Object.values(OrderType).includes(orderType as OrderType);
+  return validOrderTypes.has(orderType as OrderType);
 };
 
 export const toOrderType = (orderType: string): OrderType => {
@@ -15,4 +17,4 @@ export const toOrderType = (orderType: string): OrderType => {
     throw new InvalidOrderTypeError(orderType);
   }
   return orderType as OrderType;
-}
+};
