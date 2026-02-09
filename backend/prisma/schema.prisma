@@ -70,7 +70,7 @@ model Items {
   description  String       @db.Text
   imageUrl     String       @map("image_url") @db.VarChar
   priceMinor   Int          @map("price_minor") // price in string 100.45 => 10045
-  is_available Boolean      @default(true) @map("is_available")
+  isAvailable Boolean      @default(true) @map("is_available")
   orderItems   OrderItems[]
 
   @@map("items")
