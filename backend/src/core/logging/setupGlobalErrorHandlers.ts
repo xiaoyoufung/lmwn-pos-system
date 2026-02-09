@@ -1,10 +1,9 @@
 import { container } from "tsyringe";
 import { ILogger } from "./ILogger.js";
 import { TOKENS } from "../di/tokens.js";
-import { getLogger } from "./logger.js";
 
 export function setupGlobalErrorHandlers() {
-  const logger = getLogger();
+  const logger = container.resolve<ILogger>(TOKENS.Logger);
 
   // ------------
   // 1. Uncaught Exception
