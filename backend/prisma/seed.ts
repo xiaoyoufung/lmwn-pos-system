@@ -1,5 +1,5 @@
 // prisma/seed.ts
-import { PrismaClient } from '../generated/prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import 'dotenv/config';
 
@@ -12,17 +12,19 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  
   // Delete in correct order to respect foreign key constraints
   await prisma.orderStatusHistory.deleteMany({});
   await prisma.orderDiscounts.deleteMany({});
   await prisma.orderItems.deleteMany({});
+  await prisma.dailyOrderCounters.deleteMany({});
   await prisma.orders.deleteMany({});
   await prisma.discounts.deleteMany({});
   await prisma.tables.deleteMany({});
   await prisma.items.deleteMany({});
   await prisma.users.deleteMany({});
   await prisma.restaurants.deleteMany({});
+
+  console.log('🗑️  Cleared all existing data');
 
   // Create Restaurants
   const restaurant1 = await prisma.restaurants.create({
@@ -37,10 +39,12 @@ async function main() {
     },
   });
 
+  console.log('✅ Created restaurants');
+
   // Create Users for Restaurant 1
   const admin1 = await prisma.users.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
+      restaurantId: restaurant1.id,
       name: 'Alice Admin',
       role: 'ADMIN',
     },
@@ -48,7 +52,7 @@ async function main() {
 
   const manager1 = await prisma.users.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
+      restaurantId: restaurant1.id,
       name: 'Bob Manager',
       role: 'MANAGER',
     },
@@ -56,7 +60,7 @@ async function main() {
 
   const cashier1 = await prisma.users.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
+      restaurantId: restaurant1.id,
       name: 'Charlie Cashier',
       role: 'CASHIER',
     },
@@ -65,7 +69,7 @@ async function main() {
   // Create Users for Restaurant 2
   const admin2 = await prisma.users.create({
     data: {
-      restaurantId: restaurant2.restaurantId,
+      restaurantId: restaurant2.id,
       name: 'Diana Admin',
       role: 'ADMIN',
     },
@@ -73,304 +77,389 @@ async function main() {
 
   const cashier2 = await prisma.users.create({
     data: {
-      restaurantId: restaurant2.restaurantId,
+      restaurantId: restaurant2.id,
       name: 'Eve Cashier',
       role: 'CASHIER',
     },
   });
 
-  // Create Items for Restaurant 1
-  const items1 = await prisma.items.createMany({
-    data: [
-      // Appetizers
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Caesar Salad',
-        priceMinor: 895, // $8.95
-        is_available: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Garlic Bread',
-        priceMinor: 595, // $5.95
-        is_available: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Buffalo Wings',
-        priceMinor: 1295, // $12.95
-        is_available: true,
-      },
-      // Main Courses
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Grilled Salmon',
-        priceMinor: 2495, // $24.95
-        is_available: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Ribeye Steak',
-        priceMinor: 3495, // $34.95
-        is_available: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Margherita Pizza',
-        priceMinor: 1695, // $16.95
-        is_available: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Chicken Alfredo',
-        priceMinor: 1895, // $18.95
-        is_available: true,
-      },
-      // Desserts
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Chocolate Lava Cake',
-        priceMinor: 795, // $7.95
-        is_available: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Tiramisu',
-        priceMinor: 895, // $8.95
-        is_available: true,
-      },
-      // Beverages
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Soft Drink',
-        priceMinor: 295, // $2.95
-        is_available: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Fresh Lemonade',
-        priceMinor: 395, // $3.95
-        is_available: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        name: 'Coffee',
-        priceMinor: 350, // $3.50
-        is_available: true,
-      },
-    ],
+  console.log('✅ Created users');
+
+  // Create Items for Restaurant 1 (with description and imageUrl)
+  const caesarSalad = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Caesar Salad',
+      description: 'Crisp romaine lettuce with parmesan cheese and croutons',
+      imageUrl: 'https://example.com/images/caesar-salad.jpg',
+      priceMinor: 895, // $8.95
+      isAvailable: true,
+    },
+  });
+
+  const garlicBread = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Garlic Bread',
+      description: 'Toasted bread with garlic butter',
+      imageUrl: 'https://example.com/images/garlic-bread.jpg',
+      priceMinor: 595,
+      isAvailable: true,
+    },
+  });
+
+  const buffaloWings = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Buffalo Wings',
+      description: 'Spicy chicken wings with blue cheese dip',
+      imageUrl: 'https://example.com/images/buffalo-wings.jpg',
+      priceMinor: 1295,
+      isAvailable: true,
+    },
+  });
+
+  const grilledSalmon = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Grilled Salmon',
+      description: 'Fresh Atlantic salmon with lemon butter sauce',
+      imageUrl: 'https://example.com/images/grilled-salmon.jpg',
+      priceMinor: 2495,
+      isAvailable: true,
+    },
+  });
+
+  const ribeyeSteak = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Ribeye Steak',
+      description: '12oz premium ribeye steak cooked to perfection',
+      imageUrl: 'https://example.com/images/ribeye-steak.jpg',
+      priceMinor: 3495,
+      isAvailable: true,
+    },
+  });
+
+  const margheritaPizza = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Margherita Pizza',
+      description: 'Classic pizza with mozzarella, tomatoes, and basil',
+      imageUrl: 'https://example.com/images/margherita-pizza.jpg',
+      priceMinor: 1695,
+      isAvailable: true,
+    },
+  });
+
+  const chickenAlfredo = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Chicken Alfredo',
+      description: 'Fettuccine pasta with creamy alfredo sauce and grilled chicken',
+      imageUrl: 'https://example.com/images/chicken-alfredo.jpg',
+      priceMinor: 1895,
+      isAvailable: true,
+    },
+  });
+
+  const chocolateLavaCake = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Chocolate Lava Cake',
+      description: 'Warm chocolate cake with a gooey center',
+      imageUrl: 'https://example.com/images/chocolate-lava-cake.jpg',
+      priceMinor: 795,
+      isAvailable: true,
+    },
+  });
+
+  const tiramisu = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Tiramisu',
+      description: 'Classic Italian coffee-flavored dessert',
+      imageUrl: 'https://example.com/images/tiramisu.jpg',
+      priceMinor: 895,
+      isAvailable: true,
+    },
+  });
+
+  const softDrink = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Soft Drink',
+      description: 'Assorted sodas',
+      imageUrl: 'https://example.com/images/soft-drink.jpg',
+      priceMinor: 295,
+      isAvailable: true,
+    },
+  });
+
+  const lemonade = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Fresh Lemonade',
+      description: 'Freshly squeezed lemonade',
+      imageUrl: 'https://example.com/images/lemonade.jpg',
+      priceMinor: 395,
+      isAvailable: true,
+    },
+  });
+
+  const coffee = await prisma.items.create({
+    data: {
+      restaurantId: restaurant1.id,
+      name: 'Coffee',
+      description: 'Freshly brewed coffee',
+      imageUrl: 'https://example.com/images/coffee.jpg',
+      priceMinor: 350,
+      isAvailable: true,
+    },
   });
 
   // Create Items for Restaurant 2
-  const items2 = await prisma.items.createMany({
+  await prisma.items.createMany({
     data: [
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         name: 'Spring Rolls',
-        priceMinor: 695, // $6.95
-        is_available: true,
+        description: 'Crispy vegetable spring rolls',
+        imageUrl: 'https://example.com/images/spring-rolls.jpg',
+        priceMinor: 695,
+        isAvailable: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         name: 'Tom Yum Soup',
-        priceMinor: 895, // $8.95
-        is_available: true,
+        description: 'Spicy and sour Thai soup with shrimp',
+        imageUrl: 'https://example.com/images/tom-yum.jpg',
+        priceMinor: 895,
+        isAvailable: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         name: 'Pad Thai',
-        priceMinor: 1495, // $14.95
-        is_available: true,
+        description: 'Stir-fried rice noodles with peanuts',
+        imageUrl: 'https://example.com/images/pad-thai.jpg',
+        priceMinor: 1495,
+        isAvailable: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         name: 'Green Curry',
-        priceMinor: 1595, // $15.95
-        is_available: true,
+        description: 'Thai green curry with coconut milk',
+        imageUrl: 'https://example.com/images/green-curry.jpg',
+        priceMinor: 1595,
+        isAvailable: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         name: 'Mango Sticky Rice',
-        priceMinor: 695, // $6.95
-        is_available: true,
+        description: 'Sweet sticky rice with fresh mango',
+        imageUrl: 'https://example.com/images/mango-sticky-rice.jpg',
+        priceMinor: 695,
+        isAvailable: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         name: 'Thai Iced Tea',
-        priceMinor: 450, // $4.50
-        is_available: true,
+        description: 'Sweet Thai tea with condensed milk',
+        imageUrl: 'https://example.com/images/thai-tea.jpg',
+        priceMinor: 450,
+        isAvailable: true,
       },
     ],
   });
 
-  // Create Tables for Restaurant 1
-  const tables1 = await prisma.tables.createMany({
+  console.log('✅ Created items');
+
+  // Create Tables
+  const table1 = await prisma.tables.create({
+    data: {
+      restaurantId: restaurant1.id,
+      tableName: 'Table 1',
+      isActive: true,
+    },
+  });
+
+  await prisma.tables.createMany({
     data: [
       {
-        restaurantId: restaurant1.restaurantId,
-        tableName: 'Table 1',
-        isActive: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
+        restaurantId: restaurant1.id,
         tableName: 'Table 2',
         isActive: true,
       },
       {
-        restaurantId: restaurant1.restaurantId,
+        restaurantId: restaurant1.id,
         tableName: 'Table 3',
         isActive: true,
       },
       {
-        restaurantId: restaurant1.restaurantId,
+        restaurantId: restaurant1.id,
         tableName: 'Table 4',
         isActive: true,
       },
       {
-        restaurantId: restaurant1.restaurantId,
+        restaurantId: restaurant1.id,
         tableName: 'Table 5',
         isActive: true,
       },
       {
-        restaurantId: restaurant1.restaurantId,
+        restaurantId: restaurant1.id,
         tableName: 'Patio A',
         isActive: true,
       },
       {
-        restaurantId: restaurant1.restaurantId,
+        restaurantId: restaurant1.id,
         tableName: 'Patio B',
-        isActive: true,
-      },
-      {
-        restaurantId: restaurant1.restaurantId,
-        tableName: 'VIP Room',
         isActive: true,
       },
     ],
   });
 
-  // Create Tables for Restaurant 2
-  const tables2 = await prisma.tables.createMany({
+  const vipRoom = await prisma.tables.create({
+    data: {
+      restaurantId: restaurant1.id,
+      tableName: 'VIP Room',
+      isActive: true,
+    },
+  });
+
+  await prisma.tables.createMany({
     data: [
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         tableName: 'Table 1',
         isActive: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         tableName: 'Table 2',
         isActive: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         tableName: 'Table 3',
         isActive: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         tableName: 'Bar Seat 1',
         isActive: true,
       },
       {
-        restaurantId: restaurant2.restaurantId,
+        restaurantId: restaurant2.id,
         tableName: 'Bar Seat 2',
         isActive: true,
       },
     ],
   });
 
-  // Create Discounts for Restaurant 1
-  const discount1 = await prisma.discounts.create({
+  console.log('✅ Created tables');
+
+  // Create Discounts (FIXED: using percentageValue and fixedAmountMinor)
+  const happyHourDiscount = await prisma.discounts.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
+      restaurantId: restaurant1.id,
       name: 'Happy Hour 20%',
-      type: 'PERCENT',
-      value: 20, // 20%
+      type: 'PERCENTAGE',
+      percentageValue: 20,
+      fixedAmountMinor: null,
       expiredAt: new Date('2026-12-31'),
       isActive: true,
     },
   });
 
-  const discount2 = await prisma.discounts.create({
+  const seniorDiscount = await prisma.discounts.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
+      restaurantId: restaurant1.id,
       name: 'Senior Discount',
-      type: 'PERCENT',
-      value: 15, // 15%
-      expiredAt: null, // No expiration
+      type: 'PERCENTAGE',
+      percentageValue: 15,
+      fixedAmountMinor: null,
+      expiredAt: null,
       isActive: true,
     },
   });
 
-  const discount3 = await prisma.discounts.create({
+  const fiveDollarsOff = await prisma.discounts.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
+      restaurantId: restaurant1.id,
       name: '$5 Off',
-      type: 'FIXED',
-      value: 500, // $5.00 in minor units
+      type: 'FIXED_AMOUNT',
+      percentageValue: null,
+      fixedAmountMinor: 500, // $5.00
       expiredAt: new Date('2026-03-31'),
       isActive: true,
     },
   });
 
-  const discount4 = await prisma.discounts.create({
+  const vipDiscount = await prisma.discounts.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
+      restaurantId: restaurant1.id,
       name: 'VIP Member 25%',
-      type: 'PERCENT',
-      value: 25, // 25%
+      type: 'PERCENTAGE',
+      percentageValue: 25,
+      fixedAmountMinor: null,
       expiredAt: null,
       isActive: true,
     },
   });
 
-  // Create Discounts for Restaurant 2
-  const discount5 = await prisma.discounts.create({
+  const lunchSpecial = await prisma.discounts.create({
     data: {
-      restaurantId: restaurant2.restaurantId,
+      restaurantId: restaurant2.id,
       name: 'Lunch Special 10%',
-      type: 'PERCENT',
-      value: 10,
+      type: 'PERCENTAGE',
+      percentageValue: 10,
+      fixedAmountMinor: null,
       expiredAt: new Date('2026-06-30'),
       isActive: true,
     },
   });
 
-  const discount6 = await prisma.discounts.create({
+  const tenDollarsOff = await prisma.discounts.create({
     data: {
-      restaurantId: restaurant2.restaurantId,
+      restaurantId: restaurant2.id,
       name: '$10 Off Orders Above $50',
-      type: 'FIXED',
-      value: 1000, // $10.00 in minor units
+      type: 'FIXED_AMOUNT',
+      percentageValue: null,
+      fixedAmountMinor: 1000,
       expiredAt: null,
       isActive: true,
     },
   });
 
-  // Get tables and items for Restaurant 1
-  const allTables = await prisma.tables.findMany({
-    where: { restaurantId: restaurant1.restaurantId },
+  console.log('✅ Created discounts');
+
+  // Create Daily Order Counter for today
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  await prisma.dailyOrderCounters.create({
+    data: {
+      restaurantId: restaurant1.id,
+      dateKey: today,
+      lastVal: 3, // We'll create 3 orders
+    },
   });
 
-  const allItems = await prisma.items.findMany({
-    where: { restaurantId: restaurant1.restaurantId },
-  });
-
-  // ============================================
   // ORDER 1: Caesar Salad, Grilled Salmon, Chocolate Lava Cake
-  // ============================================
-  const order1Subtotal = allItems[0].priceMinor + allItems[3].priceMinor + allItems[7].priceMinor; // 895 + 2495 + 795 = 4185
-  const order1Discount1 = Math.floor(order1Subtotal * 0.20); // 20% Happy Hour = 837
-  const order1Discount2 = 500; // $5 off = 500
-  const order1DiscountTotal = order1Discount1 + order1Discount2; // 1337
-  const order1Total = order1Subtotal - order1DiscountTotal; // 2848
+  const order1Subtotal = caesarSalad.priceMinor + grilledSalmon.priceMinor + chocolateLavaCake.priceMinor;
+  const order1HappyHourDiscount = Math.floor(order1Subtotal * 0.20);
+  const order1FixedDiscount = 500;
+  const order1DiscountTotal = order1HappyHourDiscount + order1FixedDiscount;
+  const order1Total = order1Subtotal - order1DiscountTotal;
 
   const order1 = await prisma.orders.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
-      createdByUserId: cashier1.userId,
-      tableId: allTables[0].tableId,
+      restaurantId: restaurant1.id,
+      displayId: 1,
+      orderNumber: `ORD-${today.toISOString().split('T')[0].replace(/-/g, '')}-0001`,
+      createdByUserId: cashier1.id,
+      tableId: table1.id,
+      orderType: 'DINE_IN',
       status: 'CONFIRMED',
       subtotalMinor: order1Subtotal,
       discountTotalMinor: order1DiscountTotal,
@@ -378,240 +467,287 @@ async function main() {
     },
   });
 
-  // Order 1 Items
+  // Order 1 Items (with snapshots)
   await prisma.orderItems.createMany({
     data: [
       {
-        orderId: order1.orderId,
-        itemId: allItems[0].itemId, // Caesar Salad
-        itemNameSnapshot: allItems[0].name,
+        orderId: order1.id,
+        itemId: caesarSalad.id,
+        itemNameSnapshot: caesarSalad.name,
+        itemDescriptionSnapshot: caesarSalad.description,
+        itemImageUrlSnapshot: caesarSalad.imageUrl,
         quantity: 1,
-        unitPriceMinorSnapshot: allItems[0].priceMinor,
-        lineSubtotalMinor: allItems[0].priceMinor,
+        unitPriceMinorSnapshot: caesarSalad.priceMinor,
+        lineSubtotalMinor: caesarSalad.priceMinor,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[0].priceMinor,
+        lineTotalMinor: caesarSalad.priceMinor,
       },
       {
-        orderId: order1.orderId,
-        itemId: allItems[3].itemId, // Grilled Salmon
-        itemNameSnapshot: allItems[3].name,
+        orderId: order1.id,
+        itemId: grilledSalmon.id,
+        itemNameSnapshot: grilledSalmon.name,
+        itemDescriptionSnapshot: grilledSalmon.description,
+        itemImageUrlSnapshot: grilledSalmon.imageUrl,
         quantity: 1,
-        unitPriceMinorSnapshot: allItems[3].priceMinor,
-        lineSubtotalMinor: allItems[3].priceMinor,
+        unitPriceMinorSnapshot: grilledSalmon.priceMinor,
+        lineSubtotalMinor: grilledSalmon.priceMinor,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[3].priceMinor,
+        lineTotalMinor: grilledSalmon.priceMinor,
       },
       {
-        orderId: order1.orderId,
-        itemId: allItems[7].itemId, // Chocolate Lava Cake
-        itemNameSnapshot: allItems[7].name,
+        orderId: order1.id,
+        itemId: chocolateLavaCake.id,
+        itemNameSnapshot: chocolateLavaCake.name,
+        itemDescriptionSnapshot: chocolateLavaCake.description,
+        itemImageUrlSnapshot: chocolateLavaCake.imageUrl,
         quantity: 1,
-        unitPriceMinorSnapshot: allItems[7].priceMinor,
-        lineSubtotalMinor: allItems[7].priceMinor,
+        unitPriceMinorSnapshot: chocolateLavaCake.priceMinor,
+        lineSubtotalMinor: chocolateLavaCake.priceMinor,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[7].priceMinor,
+        lineTotalMinor: chocolateLavaCake.priceMinor,
       },
     ],
   });
 
-  // Order 1 Discounts
+  // Order 1 Discounts (with snapshots)
   await prisma.orderDiscounts.createMany({
     data: [
       {
-        orderId: order1.orderId,
-        discountId: discount1.discountId, // Happy Hour 20%
-        type: 'PERCENT',
-        value: 20,
-        appliedAmountMinor: order1Discount1,
+        orderId: order1.id,
+        discountId: happyHourDiscount.id,
+        discountNameSnapshot: happyHourDiscount.name,
+        typeSnapshot: 'PERCENTAGE',
+        percentageValueSnapshot: 20,
+        fixedAmountMinorSnapshot: null,
+        appliedAmountMinor: order1HappyHourDiscount,
       },
       {
-        orderId: order1.orderId,
-        discountId: discount3.discountId, // $5 Off
-        type: 'FIXED',
-        value: 500,
-        appliedAmountMinor: order1Discount2,
+        orderId: order1.id,
+        discountId: fiveDollarsOff.id,
+        discountNameSnapshot: fiveDollarsOff.name,
+        typeSnapshot: 'FIXED_AMOUNT',
+        percentageValueSnapshot: null,
+        fixedAmountMinorSnapshot: 500,
+        appliedAmountMinor: order1FixedDiscount,
       },
     ],
   });
 
-  // ============================================
   // ORDER 2: Ribeye Steak (x2), Garlic Bread, Coffee
-  // ============================================
-  const order2Subtotal = (allItems[4].priceMinor * 2) + allItems[1].priceMinor + allItems[11].priceMinor; // (3495 * 2) + 595 + 350 = 7935
-  const order2Discount1 = Math.floor(order2Subtotal * 0.15); // 15% Senior Discount = 1190
-  const order2Discount2 = Math.floor(order2Subtotal * 0.25); // 25% VIP Member = 1983
-  const order2DiscountTotal = order2Discount1 + order2Discount2; // 3173
-  const order2Total = order2Subtotal - order2DiscountTotal; // 4762
+  const order2Subtotal = (ribeyeSteak.priceMinor * 2) + garlicBread.priceMinor + coffee.priceMinor;
+  const order2SeniorDiscount = Math.floor(order2Subtotal * 0.15);
+  const order2VipDiscount = Math.floor(order2Subtotal * 0.25);
+  const order2DiscountTotal = order2SeniorDiscount + order2VipDiscount;
+  const order2Total = order2Subtotal - order2DiscountTotal;
 
   const order2 = await prisma.orders.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
-      createdByUserId: manager1.userId,
-      tableId: allTables[7].tableId, // VIP Room
-      status: 'COMPLETED',
+      restaurantId: restaurant1.id,
+      displayId: 2,
+      orderNumber: `ORD-${today.toISOString().split('T')[0].replace(/-/g, '')}-0002`,
+      createdByUserId: manager1.id,
+      tableId: vipRoom.id,
+      orderType: 'DINE_IN',
+      status: 'PAID',
       subtotalMinor: order2Subtotal,
       discountTotalMinor: order2DiscountTotal,
       totalMinor: order2Total,
     },
   });
 
-  // Order 2 Items
   await prisma.orderItems.createMany({
     data: [
       {
-        orderId: order2.orderId,
-        itemId: allItems[4].itemId, // Ribeye Steak
-        itemNameSnapshot: allItems[4].name,
+        orderId: order2.id,
+        itemId: ribeyeSteak.id,
+        itemNameSnapshot: ribeyeSteak.name,
+        itemDescriptionSnapshot: ribeyeSteak.description,
+        itemImageUrlSnapshot: ribeyeSteak.imageUrl,
         quantity: 2,
-        unitPriceMinorSnapshot: allItems[4].priceMinor,
-        lineSubtotalMinor: allItems[4].priceMinor * 2,
+        unitPriceMinorSnapshot: ribeyeSteak.priceMinor,
+        lineSubtotalMinor: ribeyeSteak.priceMinor * 2,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[4].priceMinor * 2,
+        lineTotalMinor: ribeyeSteak.priceMinor * 2,
       },
       {
-        orderId: order2.orderId,
-        itemId: allItems[1].itemId, // Garlic Bread
-        itemNameSnapshot: allItems[1].name,
+        orderId: order2.id,
+        itemId: garlicBread.id,
+        itemNameSnapshot: garlicBread.name,
+        itemDescriptionSnapshot: garlicBread.description,
+        itemImageUrlSnapshot: garlicBread.imageUrl,
         quantity: 1,
-        unitPriceMinorSnapshot: allItems[1].priceMinor,
-        lineSubtotalMinor: allItems[1].priceMinor,
+        unitPriceMinorSnapshot: garlicBread.priceMinor,
+        lineSubtotalMinor: garlicBread.priceMinor,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[1].priceMinor,
+        lineTotalMinor: garlicBread.priceMinor,
       },
       {
-        orderId: order2.orderId,
-        itemId: allItems[11].itemId, // Coffee
-        itemNameSnapshot: allItems[11].name,
+        orderId: order2.id,
+        itemId: coffee.id,
+        itemNameSnapshot: coffee.name,
+        itemDescriptionSnapshot: coffee.description,
+        itemImageUrlSnapshot: coffee.imageUrl,
         quantity: 1,
-        unitPriceMinorSnapshot: allItems[11].priceMinor,
-        lineSubtotalMinor: allItems[11].priceMinor,
+        unitPriceMinorSnapshot: coffee.priceMinor,
+        lineSubtotalMinor: coffee.priceMinor,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[11].priceMinor,
+        lineTotalMinor: coffee.priceMinor,
       },
     ],
   });
 
-  // Order 2 Discounts
   await prisma.orderDiscounts.createMany({
     data: [
       {
-        orderId: order2.orderId,
-        discountId: discount2.discountId, // Senior Discount 15%
-        type: 'PERCENT',
-        value: 15,
-        appliedAmountMinor: order2Discount1,
+        orderId: order2.id,
+        discountId: seniorDiscount.id,
+        discountNameSnapshot: seniorDiscount.name,
+        typeSnapshot: 'PERCENTAGE',
+        percentageValueSnapshot: 15,
+        fixedAmountMinorSnapshot: null,
+        appliedAmountMinor: order2SeniorDiscount,
       },
       {
-        orderId: order2.orderId,
-        discountId: discount4.discountId, // VIP Member 25%
-        type: 'PERCENT',
-        value: 25,
-        appliedAmountMinor: order2Discount2,
+        orderId: order2.id,
+        discountId: vipDiscount.id,
+        discountNameSnapshot: vipDiscount.name,
+        typeSnapshot: 'PERCENTAGE',
+        percentageValueSnapshot: 25,
+        fixedAmountMinorSnapshot: null,
+        appliedAmountMinor: order2VipDiscount,
       },
     ],
   });
 
-  // ============================================
   // ORDER 3: Buffalo Wings, Margherita Pizza, Tiramisu
-  // ============================================
-  const order3Subtotal = allItems[2].priceMinor + allItems[5].priceMinor + allItems[8].priceMinor; // 1295 + 1695 + 895 = 3885
-  const order3Discount1 = 500; // $5 Off = 500
-  const order3Discount2 = Math.floor(order3Subtotal * 0.20); // 20% Happy Hour = 777
-  const order3DiscountTotal = order3Discount1 + order3Discount2; // 1277
-  const order3Total = order3Subtotal - order3DiscountTotal; // 2608
+  const order3Subtotal = buffaloWings.priceMinor + margheritaPizza.priceMinor + tiramisu.priceMinor;
+  const order3FixedDiscount = 500;
+  const order3HappyHourDiscount = Math.floor(order3Subtotal * 0.20);
+  const order3DiscountTotal = order3FixedDiscount + order3HappyHourDiscount;
+  const order3Total = order3Subtotal - order3DiscountTotal;
 
   const order3 = await prisma.orders.create({
     data: {
-      restaurantId: restaurant1.restaurantId,
-      createdByUserId: cashier1.userId,
-      tableId: allTables[5].tableId, // Patio A
-      status: 'PENDING',
+      restaurantId: restaurant1.id,
+      displayId: 3,
+      orderNumber: `ORD-${today.toISOString().split('T')[0].replace(/-/g, '')}-0003`,
+      createdByUserId: cashier1.id,
+      tableId: null, // TAKE_AWAY order
+      orderType: 'TAKE_AWAY',
+      status: 'COOKING',
       subtotalMinor: order3Subtotal,
       discountTotalMinor: order3DiscountTotal,
       totalMinor: order3Total,
     },
   });
 
-  // Order 3 Items
   await prisma.orderItems.createMany({
     data: [
       {
-        orderId: order3.orderId,
-        itemId: allItems[2].itemId, // Buffalo Wings
-        itemNameSnapshot: allItems[2].name,
+        orderId: order3.id,
+        itemId: buffaloWings.id,
+        itemNameSnapshot: buffaloWings.name,
+        itemDescriptionSnapshot: buffaloWings.description,
+        itemImageUrlSnapshot: buffaloWings.imageUrl,
         quantity: 1,
-        unitPriceMinorSnapshot: allItems[2].priceMinor,
-        lineSubtotalMinor: allItems[2].priceMinor,
+        unitPriceMinorSnapshot: buffaloWings.priceMinor,
+        lineSubtotalMinor: buffaloWings.priceMinor,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[2].priceMinor,
+        lineTotalMinor: buffaloWings.priceMinor,
       },
       {
-        orderId: order3.orderId,
-        itemId: allItems[5].itemId, // Margherita Pizza
-        itemNameSnapshot: allItems[5].name,
+        orderId: order3.id,
+        itemId: margheritaPizza.id,
+        itemNameSnapshot: margheritaPizza.name,
+        itemDescriptionSnapshot: margheritaPizza.description,
+        itemImageUrlSnapshot: margheritaPizza.imageUrl,
         quantity: 1,
-        unitPriceMinorSnapshot: allItems[5].priceMinor,
-        lineSubtotalMinor: allItems[5].priceMinor,
+        unitPriceMinorSnapshot: margheritaPizza.priceMinor,
+        lineSubtotalMinor: margheritaPizza.priceMinor,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[5].priceMinor,
+        lineTotalMinor: margheritaPizza.priceMinor,
       },
       {
-        orderId: order3.orderId,
-        itemId: allItems[8].itemId, // Tiramisu
-        itemNameSnapshot: allItems[8].name,
+        orderId: order3.id,
+        itemId: tiramisu.id,
+        itemNameSnapshot: tiramisu.name,
+        itemDescriptionSnapshot: tiramisu.description,
+        itemImageUrlSnapshot: tiramisu.imageUrl,
         quantity: 1,
-        unitPriceMinorSnapshot: allItems[8].priceMinor,
-        lineSubtotalMinor: allItems[8].priceMinor,
+        unitPriceMinorSnapshot: tiramisu.priceMinor,
+        lineSubtotalMinor: tiramisu.priceMinor,
         lineDiscountMinor: 0,
-        lineTotalMinor: allItems[8].priceMinor,
+        lineTotalMinor: tiramisu.priceMinor,
       },
     ],
   });
 
-  // Order 3 Discounts
   await prisma.orderDiscounts.createMany({
     data: [
       {
-        orderId: order3.orderId,
-        discountId: discount3.discountId, // $5 Off
-        type: 'FIXED',
-        value: 500,
-        appliedAmountMinor: order3Discount1,
+        orderId: order3.id,
+        discountId: fiveDollarsOff.id,
+        discountNameSnapshot: fiveDollarsOff.name,
+        typeSnapshot: 'FIXED_AMOUNT',
+        percentageValueSnapshot: null,
+        fixedAmountMinorSnapshot: 500,
+        appliedAmountMinor: order3FixedDiscount,
       },
       {
-        orderId: order3.orderId,
-        discountId: discount1.discountId, // Happy Hour 20%
-        type: 'PERCENT',
-        value: 20,
-        appliedAmountMinor: order3Discount2,
+        orderId: order3.id,
+        discountId: happyHourDiscount.id,
+        discountNameSnapshot: happyHourDiscount.name,
+        typeSnapshot: 'PERCENTAGE',
+        percentageValueSnapshot: 20,
+        fixedAmountMinorSnapshot: null,
+        appliedAmountMinor: order3HappyHourDiscount,
       },
     ],
   });
 
-  // ============================================
-  // ORDER STATUS HISTORY
-  // ============================================
+  console.log('✅ Created orders with items and discounts');
+
+  // Order Status History
   await prisma.orderStatusHistory.createMany({
     data: [
       {
-        orderId: order2.orderId,
-        fromStatus: 'PENDING',
+        orderId: order2.id,
+        fromStatus: 'CREATED',
         toStatus: 'CONFIRMED',
-        changedByUserId: manager1.userId,
-        changedAt: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
+        changedByUserId: manager1.id,
+        changedAt: new Date(Date.now() - 60 * 60 * 1000),
         notes: 'Order confirmed by manager',
       },
       {
-        orderId: order2.orderId,
+        orderId: order2.id,
         fromStatus: 'CONFIRMED',
-        toStatus: 'COMPLETED',
-        changedByUserId: cashier1.userId,
-        changedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+        toStatus: 'COOKING',
+        changedByUserId: manager1.id,
+        changedAt: new Date(Date.now() - 45 * 60 * 1000),
+        notes: 'Sent to kitchen',
+      },
+      {
+        orderId: order2.id,
+        fromStatus: 'COOKING',
+        toStatus: 'SERVED',
+        changedByUserId: cashier1.id,
+        changedAt: new Date(Date.now() - 30 * 60 * 1000),
+        notes: 'Food delivered to table',
+      },
+      {
+        orderId: order2.id,
+        fromStatus: 'SERVED',
+        toStatus: 'PAID',
+        changedByUserId: cashier1.id,
+        changedAt: new Date(Date.now() - 15 * 60 * 1000),
         notes: 'Payment received - Cash',
       },
     ],
   });
 
+  console.log('✅ Created order status history');
+
+  console.log('🎉 Seed completed successfully!');
 }
 
 main()
@@ -619,7 +755,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e);
+    console.error('❌ Seed failed:', e);
     await prisma.$disconnect();
     process.exit(1);
   });
