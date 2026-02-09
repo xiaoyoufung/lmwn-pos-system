@@ -12,7 +12,7 @@ export default defineConfig({
   // Make environment variables available
     define: {
       'import.meta.env.BACKEND_PORT': JSON.stringify(
-        env.BACKEND_PORT || 'http://localhost:3200/api'
+        env.BACKEND_PORT || 'http://localhost:3200/'
       ),
     },
   resolve: {

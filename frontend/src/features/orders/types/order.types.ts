@@ -1,19 +1,49 @@
 export enum OrderStatus {
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
+  COOKING = 'COOKING',
   PREPARING = 'PREPARING',
   READY = 'READY',
+  PAID = 'PAID',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
 }
 
+export enum OrderType {
+  DINE_IN = 'DINE_IN',
+  TAKE_AWAY = 'TAKE_AWAY',
+  DELIVERY = 'DELIVERY',
+}
+
+export enum DiscountType {
+  PERCENTAGE = 'PERCENTAGE',
+  FIXED_AMOUNT = 'FIXED_AMOUNT',
+}
+
 export interface OrderItem {
   id: string
+  orderId: string
+  itemId: string
   itemNameSnapshot: string
+  itemDescriptionSnapshot: string
+  itemImageUrlSnapshot: string
+  unitPriceMinorSnapshot: number // minor units (cents/satang)
   quantity: number
-  unitPrice: number // satang
-  totalPrice: number // satang
-  notes?: string
+  lineSubtotalMinor: number
+  lineDiscountMinor: number
+  lineTotalMinor: number
+}
+
+export interface OrderDiscount {
+  id: string
+  orderId: string
+  discountId: string
+  discountNameSnapshot: string
+  typeSnapshot: DiscountType
+  percentageValueSnapshot: number | null
+  fixedAmountMinorSnapshot: number | null
+  appliedAmountMinor: number
+  createdAt: string
 }
 
 export interface OrderStatusHistory {
@@ -26,31 +56,34 @@ export interface OrderStatusHistory {
 }
 
 export interface Order {
-  orderId: string
+  id: string
   restaurantId: string
-  tableNumber: number
-  subtotalAmount: number // satang
-  discountAmount: number // satang
-  totalMinor: number // satang
+  displayId: number
+  orderNumber: string
+  orderType: OrderType
+  tableId: string | null
   status: OrderStatus
-  items: OrderItem[]
-  statusHistory?: OrderStatusHistory[]
-  notes?: string
+  subtotalMinor: number // minor units (cents/satang)
+  discountTotalMinor: number // minor units (cents/satang)
+  totalMinor: number // minor units (cents/satang)
+  createdByUserId: string
   createdAt: string
   updatedAt: string
-  itemsCount: number
+  _items: OrderItem[]
+  _discounts: OrderDiscount[]
+  statusHistory?: OrderStatusHistory[]
+  notes?: string
 }
 
 export interface CreateOrderInput {
+  orderType: OrderType
+  tableId?: string
   items: Array<{
-    itemNameSnapshot: string
+    itemId: string
     quantity: number
-    unitPrice: number
+    notes?: string
   }>
-  discounts?: {
-    percentOff?: number
-    fixedOff?: number
-  }
+  discountIds?: string[]
   notes?: string
 }
 

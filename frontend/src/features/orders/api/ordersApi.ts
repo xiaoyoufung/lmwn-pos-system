@@ -3,8 +3,8 @@ import type { Order, CreateOrderInput, UpdateOrderStatusInput } from '../types/o
 
 export const ordersApi = {
   getOrders: async (params?: { status?: string; page?: number; limit?: number }) => {
-    const { data } = await apiClient.get<{ data: Order[] }>('/orders', { params })
-    return data.data
+    const { data } = await apiClient.get<{ data: Order[] }>('/orders/54e8b23d-fa33-4e63-9147-c08cf7420f2c', { params })
+    return data
   },
 
   getOrderById: async (id: string) => {
