@@ -146,6 +146,41 @@ docker-compose logs postgres
 
 - In the future, if we have a Billing module and need independent scaling to extract its service, the clean architecture can make the extraction easier.
 
+The project structure is as follows:
+
+```
+clean-archi-express/
+├── src/
+│   ├── core/                     # Domain-agnostic utilities
+│   │   ├── di/                   # Dependency Injection tokens
+│   │   ├── errors/               # Base error classes
+│   │   ├── logging/              # Logging interfaces
+│   │   ├── events/               # Event bus implementation
+│   │   └── cli/                  # CLI utilities
+│   ├── infrastructure/           # External concerns (HTTP, DB, DI)
+│   │   ├── http/                 # Express server, middleware
+│   │   ├── db/                   # TypeORM configuration
+│   │   └── logging/              # Pino logger implementation
+│   │   └── security/             # Security middleware
+│   └── modules/                  # Feature modules
+│       ├── user/
+│       │   ├── domain/           # Entities, interfaces
+│       │   ├── application/      # Use cases, event emitter
+│       │   ├── infrastructure/   # Repositories, controllers
+│       │   └── public/           # Public API for other modules
+│       └── notification/
+│       │   └── infrastructure/   # Event listener, DI
+│       └── project/
+│           ├── domain/           # Entities, interfaces
+│           ├── application/      # Use cases
+│           └── infrastructure/   # Controllers, DI
+├── test/                         # Tests (mirrors src structure)
+├── docs/                         # Documentation
+│   └── Architecture.md           # Detailed architecture docs
+└── README.md                     # Project documentation
+
+```
+
 ---
 
 ## ER Diagram
@@ -158,6 +193,8 @@ docker-compose logs postgres
 - Audit Trail (OrderStatusHistory): This effectively solves the requirement to "identify the root cause quickly". If an order mysteriously gets cancelled, you know exactly who did it and when.
 
 - I added a displayId separate from the UUID because while UUIDs ensure system uniqueness, kitchen staff and customers need short, pronounceable numbers for real-time operations
+
+- OrderDiscount a snapshot that preserve discount details as they were when the order was created (even if the discount changes later)
 
 ---
 
