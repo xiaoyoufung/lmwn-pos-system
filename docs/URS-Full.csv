@@ -1,18 +1,18 @@
 Number,Category,ID,User Requirement,Priority
 ,,,,
-1,Support receiving and storing order data,URS-01,View list of all orders with status and totals,High
-,,URS-02,Create new order by adding items and applying discounts (percentage or fixed amount),High
-,,URS-03,"See order totals calculated automatically (subtotal, discount, final total)",High
-,,URS-04,View detailed order information including all items and pricing breakdown,Medium
-,,URS-05,"Receive validation errors when entering invalid data (negative prices, empty orders)",High
+1,Support receiving and storing order data,URS-01,User can View list of all orders with status and totals,High
+,,URS-02,User can Create new order by adding items and applying discounts (percentage or fixed amount),High
+,,URS-03,"User can See order totals calculated automatically (subtotal, discount, final total)",High
+,,URS-04,User can View detailed order information including all items and pricing breakdown,Medium
+,,URS-05,"User can Receive validation errors when entering invalid data (negative prices, empty orders)",High
 ,,,,
-2,Manage order states throughout lifecycle,URS-06,Change order status through defined workflow throughout lifecycle,High
-,,URS-07,Be prevented from making invalid status transitions (with clear error messages),High
-,,URS-08,Cancel order from any status (except COMPLETED),High
-,,URS-09,View complete status change history for any order with timestamps and notes,Medium
-,,URS-10,"Filter order list by status (show only PENDING, CONFIRMED, etc.) ",Medium
-,,URS-11,See dashboard showing count of orders in each status,Low
+2,Manage order states throughout lifecycle,URS-06,User can Change order status through defined workflow throughout lifecycle,High
+,,URS-07,User can Be prevented from making invalid status transitions (with clear error messages),High
+,,URS-08,User can Cancel order from any status (except COMPLETED),High
+,,URS-09,User can View complete status change history for any order with timestamps and notes,Medium
+,,URS-10,"User can Filter order list by status (show only PENDING, CONFIRMED, etc.) ",Medium
+,,URS-11,User can See dashboard showing count of orders in each status,Low
 ,,,,
-3,Displaying sales reports,URS-12,"View daily sales summary showing total orders, total revenue, and average order value",High
-,,URS-13,View hourly sales breakdown to identify peak business hours,Medium
-,,URS-14,Select custom date range for sales reports,Medium
+3,Displaying sales reports,URS-12,"User can View daily sales summary showing total orders, total revenue, and average order value",High
+,,URS-13,User can View hourly sales breakdown to identify peak business hours,Medium
+,,URS-14,User can Select custom date range for sales reports,Medium
