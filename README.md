@@ -188,7 +188,7 @@ clean-archi-express/
 
 ## Database Design
 
-- Snapshotting (itemNameSnapshot, unitPriceMinorSnapshot): This is excellent. Many juniors link directly to the Items table. If the restaurant changes the price of "Fried Rice" next week, old order records would become inaccurate without these snapshots. This directly addresses "financial calculations are always accurate".
+- Snapshotting (itemNameSnapshot, unitPriceMinorSnapshot): If the restaurant changes the price of "Fried Rice" next week, old order records would become inaccurate without these snapshots. This directly addresses "financial calculations are always accurate".
 
 - Audit Trail (OrderStatusHistory): This effectively solves the requirement to "identify the root cause quickly". If an order mysteriously gets cancelled, you know exactly who did it and when.
 
